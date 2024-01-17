@@ -50,6 +50,10 @@ resource "aws_instance" "public_instance" {
   key_name               = aws_key_pair.key_pair.key_name
   vpc_security_group_ids = [aws_security_group.sg_ec2.id]
 
+  root_block_device {
+    volume_size = 20  # Set the desired root volume size in GB
+  }
+
   tags = {
     Name = "Target"
   }

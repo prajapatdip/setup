@@ -49,13 +49,13 @@
     kind: Node
   register: node_list
 
-- name: "Clonde kube-prometheus repository"
+- name: "Clone kube-prometheus repository"
   command: "docker run -it -v ${PWD}:/work -w /work alpine sh -c 'apk add git && git clone --depth 1 https://github.com/prometheus-operator/kube-prometheus.git -b release-0.10 /tmp/ && cp -R /tmp/manifests .'"
 
 - name: "Deploy Prometheus"
   shell: kubectl create -f .
   args:
-    chdir: "./setup/setup/files/kubernetes/1.23/manifests/setup/"
+    chdir: "/opt/setup/setup/files/kubernetes/1.23/manifests/setup/"
 
 - name: "Menifest Setup"
   shell: kubectl create -f .
@@ -121,13 +121,6 @@
   command: pm2 start server/server.js --name kubemonitor --watch -f
   args:
     chdir: /opt/project
-
-- name: "Port-forward Prometheus to 9090"
-  command: kubectl port-forward -n monitoring svc/prometheus-operated 9090
-  async: 300
-  poll: 0
-  become_user: your_k8s_user
-  become_method: sudo
 
 - name: "Prot-forward Prometheus"
   shell: kubectl -n monitoring port-forward svc/prometheus-operated 9090
