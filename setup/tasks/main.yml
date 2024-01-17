@@ -4,8 +4,14 @@
 - name: "Install docker"
   shell: sudo snap install docker
 
+- name: "Docker version check"
+  shell: docker --version
+
 - name: "Set permission to run docker as root"
   shell: sudo chmod 666 /var/run/docker.sock
+
+- name: "Update machine"
+  shell: sudo apt-get update
 
 - name: "Install pip"
   shell: sudo apt-get -y install python3-pip
@@ -44,12 +50,7 @@
   register: node_list
 
 - name: "Clonde kube-prometheus repository"
-  shell: |
-          docker run -it -v ${PWD}:/work -w /work alpine sh
-          apk add git
-          git clone --depth 1 https://github.com/prometheus-operator/kube-prometheus.git -b release-0.10 /tmp/
-          cp -R /tmp/manifests .
-          exit
+  command: "docker run -it -v ${PWD}:/work -w /work alpine sh -c 'apk add git && git clone --depth 1 https://github.com/prometheus-operator/kube-prometheus.git -b release-0.10 /tmp/ && cp -R /tmp/manifests .'"
 
 - name: "Deploy Prometheus"
   shell: kubectl create -f .
