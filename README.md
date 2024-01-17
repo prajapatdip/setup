@@ -91,6 +91,11 @@ ansible-playbook -i inventory site.yml
 ### Start using KubeMonitor!
 Go to <instance.public_ip>:3001/ and enjoy your new k8s experience!
 
+### Make sure to destroy the infrastructure.
+```
+terraform destroy
+```
+
 ## Demo
 Check out the demo of setting up KubeMonitor on AWS in the following video: [Demo Video](https://drive.google.com/file/d/1RiCvqvHd6nAZONcWS2MEEAEOCQMSyCli/view?usp=drive_link)
 
