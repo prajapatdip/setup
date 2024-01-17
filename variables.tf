@@ -8,5 +8,5 @@ variable "ingressrules" {
 }
 
 variable "ami" {
-  default = "ami-03f4878755434977f"
+  default = "<iam_id>"
 }
