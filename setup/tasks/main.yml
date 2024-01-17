@@ -1,0 +1,139 @@
+---
+# tasks file for setup
+
+- name: "Install docker"
+  shell: sudo snap install docker
+
+- name: "Set permission to run docker as root"
+  shell: sudo chmod 666 /var/run/docker.sock
+
+- name: "Install pip"
+  shell: sudo apt-get -y install python3-pip
+
+- name: "install pre-requisites"
+  pip:
+    name:
+      - openshift
+      - pyyaml
+      - kubernetes
+
+- name: "Install kubectl"
+  shell: sudo snap install kubectl --classic
+
+- name: "Install kind"
+  shell: |
+          [ $(uname -m) = x86_64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-amd64
+          [ $(uname -m) = aarch64 ] && curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.20.0/kind-linux-arm64
+          chmod +x ./kind
+          sudo mv ./kind /usr/local/bin/kind
+
+- name: "Clone Setup repository"
+  git:
+    repo: https://github.com/prajapatdip/setup.git
+    dest: /opt/setup
+  register: git_clone_result
+
+- name: "Create k8s cluster with kind"
+  shell: kind create cluster --name monitoring --image kindest/node:v1.23.6 --config kind.yaml
+  args:
+    chdir: "/opt/setup/setup/files/kubernetes/1.23/"
+
+- name: "Test all the node are healthy and ready"
+  kubernetes.core.k8s_info:
+    kind: Node
+  register: node_list
+
+- name: "Clonde kube-prometheus repository"
+  shell: |
+          docker run -it -v ${PWD}:/work -w /work alpine sh
+          apk add git
+          git clone --depth 1 https://github.com/prometheus-operator/kube-prometheus.git -b release-0.10 /tmp/
+          cp -R /tmp/manifests .
+          exit
+
+- name: "Deploy Prometheus"
+  shell: kubectl create -f .
+  args:
+    chdir: "./setup/setup/files/kubernetes/1.23/manifests/setup/"
+
+- name: "Menifest Setup"
+  shell: kubectl create -f .
+  args:
+    chdir: "/opt/setup/setup/files/kubernetes/1.23/manifests/"
+
+- name: "Get the pods in monitoring ns"
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: monitoring
+
+- name: "Create grafana dashboard"
+  kubernetes.core.k8s:
+    state: present
+    src: "/opt/setup/setup/files/kubernetes/1.23/manifests/grafana-dashboardDatasources.yaml"
+
+- name: "Prot-forward grafana"
+  shell: kubectl -n monitoring port-forward svc/grafana 3000
+  async: 300
+  poll: 0
+
+- name: "Prot-forward Prometheus"
+  shell: kubectl -n monitoring port-forward svc/prometheus-operated 9090
+  async: 300
+  poll: 0
+
+- name: "Clone Kubemonitor repository"
+  git:
+    repo: https://github.com/prajapatdip/project.git
+    dest: /opt/project
+  register: git_clone_result
+
+- name: "Install Node.js and npm"
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - nodejs
+    - npm
+
+- name: "Install project dependencies"
+  npm:
+    path: /opt/project
+
+- name: "Install nodemon"
+  shell: npm install -g nodemon
+
+- name: "Build Kubemonitor"
+  command: npm run build
+  args:
+    chdir: /opt/project
+
+- name: "Increase open file limit"
+  shell: ulimit -n 65536
+  become: true
+
+- name: "Install PM2 globally"
+  command: npm install -g pm2
+  args:
+    chdir: /opt/project
+
+- name: "Start Kubemonitor with PM2 and watch"
+  command: pm2 start server/server.js --name kubemonitor --watch -f
+  args:
+    chdir: /opt/project
+
+- name: "Port-forward Prometheus to 9090"
+  command: kubectl port-forward -n monitoring svc/prometheus-operated 9090
+  async: 300
+  poll: 0
+  become_user: your_k8s_user
+  become_method: sudo
+
+- name: "Prot-forward Prometheus"
+  shell: kubectl -n monitoring port-forward svc/prometheus-operated 9090
+  async: 300
+  poll: 0
+
+- name: "Wait for Kubemonitor to start"
+  wait_for:
+    port: 3001
+    state: started
