@@ -10,13 +10,13 @@ The architecture of the KubeMonitor AWS deployment involves the following compon
 ![KubeMonitor](https://github.com/prajapatdip/setup/assets/104031556/2776c26b-6889-47ef-8262-9e4afd8cff92)
 
 
-* AWS EC2 Instances: Virtual servers hosting the KubeMonitor application and associated components.
+* __AWS EC2 Instances:__ Virtual servers hosting the KubeMonitor application and associated components.
 
-* Terraform: Infrastructure as Code (IaC) tool used to provision AWS resources.
+* __Terraform:__ Infrastructure as Code (IaC) tool used to provision AWS resources.
 
-* Ansible: Configuration management tool used to automate the setup and configuration of software on the AWS instances.
+* __Ansible:__ Configuration management tool used to automate the setup and configuration of software on the AWS instances.
 
-* KubeMonitor Application: Monitors the Kubernetes cluster's health and performance, providing a comprehensive dashboard, metrics, and alerts.
+* __KubeMonitor Application:__ Monitors the Kubernetes cluster's health and performance, providing a comprehensive dashboard, metrics, and alerts.
 
 ## Prerequisites
 
