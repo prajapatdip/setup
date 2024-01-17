@@ -40,6 +40,7 @@ exit
 ```
 
 ### Step 4 : Starting the application using Ansible
+NOTE: If get and error in "Set permission to run docker as root" task then re-run the the below command
 
 ```
 ansible-playbook -i inventory site.yml
