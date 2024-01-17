@@ -1,6 +1,23 @@
 # KubeMonitor AWS Deployment
 
 This repository provides Terraform and Ansible scripts to deploy KubeMonitor on AWS. Deploying KubeMonitor on AWS allows you to efficiently monitor your Kubernetes cluster's health, performance, and events. Follow the steps below to set up KubeMonitor on your AWS infrastructure.
+
+## Architecture
+The architecture of the KubeMonitor AWS deployment involves the following components:
+
+### 2D Architecture Diagram:
+
+![KubeMonitor](https://github.com/prajapatdip/setup/assets/104031556/2776c26b-6889-47ef-8262-9e4afd8cff92)
+
+
+* AWS EC2 Instances: Virtual servers hosting the KubeMonitor application and associated components.
+
+* Terraform: Infrastructure as Code (IaC) tool used to provision AWS resources.
+
+* Ansible: Configuration management tool used to automate the setup and configuration of software on the AWS instances.
+
+* KubeMonitor Application: Monitors the Kubernetes cluster's health and performance, providing a comprehensive dashboard, metrics, and alerts.
+
 ## Prerequisites
 
 Before you begin, ensure you have the following prerequisites:
