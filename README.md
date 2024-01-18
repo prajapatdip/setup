@@ -91,7 +91,8 @@ ansible-playbook -i inventory site.yml
 ### Start using KubeMonitor!
 Go to <instance.public_ip>:3001/ and enjoy your new k8s experience!
 
-### Make sure to destroy the infrastructure.
+### Cleanup
+To avoid incurring unnecessary costs, run the following command to destroy the resources created by Terraform:
 ```
 terraform destroy
 ```
