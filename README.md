@@ -1,6 +1,6 @@
 # KubeMonitor AWS Deployment
 
-This repository provides Terraform and Ansible scripts to deploy KubeMonitor on AWS. Deploying KubeMonitor on AWS allows you to efficiently monitor your Kubernetes cluster's health, performance, and events. Follow the steps below to set up KubeMonitor on your AWS infrastructure.
+This repository provides Terraform and Ansible scripts to deploy KubeMonitor on AWS. Deploying [KubeMonitor](https://github.com/prajapatdip/project) on AWS allows you to efficiently monitor your Kubernetes cluster's health, performance, and events. Follow the steps below to set up KubeMonitor on your AWS infrastructure.
 
 ## Architecture
 The architecture of the KubeMonitor AWS deployment involves the following components:
